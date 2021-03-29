@@ -1,32 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/ProductDetail.dart';
-import '../models/Product.dart';
+import '../providers/Product.dart';
 
 class ProductItem extends StatelessWidget {
-  final Product product;
-
-  ProductItem(this.product);
-
   @override
   Widget build(BuildContext context) {
+    final product = Provider.of<Product>(context);
     return GridTile(
       child: InkWell(
-        onTap: (){Navigator.of(context).pushNamed(ProductDetail.routeName, arguments: product);},
-              child: Container(
+        onTap: () {
+          Navigator.of(context)
+              .pushNamed(ProductDetail.routeName, arguments: product.id);
+        },
+        child: Container(
           child: Image.network(product.imageUrl, fit: BoxFit.cover),
         ),
       ),
       footer: GridTileBar(
         backgroundColor: Colors.grey.withOpacity(0.5),
-        leading:
-            IconButton(icon: Icon(Icons.favorite_outline), onPressed: () {}),
+        leading: IconButton(
+            icon: Icon(
+              product.isFavourite ? Icons.favorite : Icons.favorite_outline,
+              color: product.isFavourite ? Colors.red : Colors.white,
+            ),
+            onPressed: () {
+              product.toggleFavouriteStatus();
+            }),
         title: Text(
           '${product.title}',
           textAlign: TextAlign.center,
         ),
-        trailing:
-            IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}),
+        trailing: IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}),
       ),
     );
   }

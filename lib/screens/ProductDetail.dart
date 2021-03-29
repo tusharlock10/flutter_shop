@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/providers/Product.dart';
 
-import '../models/Product.dart';
+import '../providers/Products.dart';
 
 class ProductDetail extends StatelessWidget {
   static const routeName = '/product';
-  Product product;
+  int productId;
 
   @override
   Widget build(BuildContext context) {
-    this.product = ModalRoute.of(context).settings.arguments;
+    this.productId = ModalRoute.of(context).settings.arguments;
+    final product = Provider.of<Products>(context).findById(this.productId);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(this.product.title),
+        title: Text(product.title),
       ),
       body: Column(
         children: [
-          Image.network(this.product.imageUrl, fit: BoxFit.contain),
-          Text(this.product.description),
+          Image.network(product.imageUrl, fit: BoxFit.contain),
+          Text(product.description),
         ],
       ),
     );
