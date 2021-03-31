@@ -26,8 +26,17 @@ class Cart with ChangeNotifier {
     return this._items.length;
   }
 
+  double get cartTotal {
+    double totalPrice = 0;
+    this
+        ._items
+        .forEach((cartItem) => totalPrice = totalPrice + cartItem.totalPrice);
+    return totalPrice.roundToDouble();
+  }
+
   addItem(Product product) {
-    final productIndex = _items.indexWhere((item) => item.product.id == product.id);
+    final productIndex =
+        _items.indexWhere((item) => item.product.id == product.id);
     if (productIndex < 0) {
       // if product is not present, then add it in the cart
       this._items.add(
@@ -48,6 +57,11 @@ class Cart with ChangeNotifier {
       );
       this._items[productIndex] = newCartItem;
     }
+    notifyListeners();
+  }
+
+  removeItem(int cartItemId) {
+    this._items.removeWhere((cartItem) => cartItem.id == cartItemId);
     notifyListeners();
   }
 }
