@@ -3,11 +3,14 @@ import 'package:provider/provider.dart';
 
 import '../screens/ProductDetail.dart';
 import '../providers/Product.dart';
+import '../providers/Cart.dart';
 
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
+    final cart = Provider.of<Cart>(context);
+
     return GridTile(
       child: InkWell(
         onTap: () {
@@ -32,7 +35,9 @@ class ProductItem extends StatelessWidget {
           '${product.title}',
           textAlign: TextAlign.center,
         ),
-        trailing: IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}),
+        trailing: IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {
+          cart.addItem(product);
+        }),
       ),
     );
   }

@@ -10,6 +10,10 @@ class Products with ChangeNotifier {
     return [...this._products];
   }
 
+  List<Product> get favouriteProducts {
+    return _products.where((element) => element.isFavourite).toList();
+  }
+
   Product findById(int productId) {
     return this._products.firstWhere((product) => product.id == productId);
   }
