@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../providers/Cart.dart';
 import './Cart.dart' as CartScreen;
 import '../widgets/ProductGrid.dart';
+import '../widgets/AppDrawer.dart';
 
 class ProductOverview extends StatefulWidget {
   static const routeName = '/';
@@ -29,6 +30,7 @@ class _ProductOverviewState extends State<ProductOverview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: Text('Products'),
         actions: [

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:math' as Math;
 
 import '../providers/Cart.dart' as CartProvider;
+import '../widgets/AppDrawer.dart';
 import '../widgets/CartItem.dart';
 
 class Cart extends StatelessWidget {
@@ -13,6 +14,7 @@ class Cart extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider.Cart>(context);
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: Text('Cart'),
       ),
