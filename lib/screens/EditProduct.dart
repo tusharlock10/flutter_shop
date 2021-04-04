@@ -12,10 +12,19 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
+  bool _isInit = true;
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   Product _editingProduct = Product(
       id: null, title: null, description: null, price: null, imageUrl: null);
+
+  @override
+  void didChangeDependencies() {
+    if (this._isInit) {
+      this._editingProduct ??= ModalRoute.of(context).settings.arguments as Product;
+    }
+    super.didChangeDependencies();
+  }
 
   void onSave() {
     if (this._form.currentState.validate()) {

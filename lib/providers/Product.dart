@@ -24,17 +24,12 @@ class Product with ChangeNotifier {
       double newPrice,
       String newimageUrl,
       bool newIsFavourite})
-      : id = newId != null ? newId : product.id,
-        title = newTitle != null ? newTitle : product.title,
-        description =
-            newDescription != null ? newDescription : product.description,
-        price = newPrice != null ? newPrice : product.price,
-        imageUrl = newimageUrl != null ? newimageUrl : product.imageUrl,
-        isFavourite = newIsFavourite != null
-            ? newIsFavourite
-            : product.isFavourite != null
-                ? product.isFavourite
-                : false;
+      : id = newId ?? product.id,
+        title = newTitle ?? product.title,
+        description = newDescription ?? product.description,
+        price = newPrice ?? product.price,
+        imageUrl = newimageUrl ?? product.imageUrl,
+        isFavourite = newIsFavourite ?? product.isFavourite ?? false;
 
   @override
   String toString() {
