@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/ProductsOverview.dart';
 import '../screens/Cart.dart';
+import '../screens/UserProducts.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -23,8 +24,13 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.shopping_cart),
             title: Text('Cart'),
+            onTap: () => Navigator.of(context).pushNamed(Cart.routeName),
+          ),
+          ListTile(
+            leading: Icon(Icons.storage_outlined),
+            title: Text('Your Products'),
             onTap: () =>
-                Navigator.of(context).pushNamed(Cart.routeName),
+                Navigator.of(context).pushNamed(UserProductsScreen.routeName),
           ),
         ],
       ),

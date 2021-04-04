@@ -35,9 +35,21 @@ class ProductItem extends StatelessWidget {
           '${product.title}',
           textAlign: TextAlign.center,
         ),
-        trailing: IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {
-          cart.addItem(product);
-        }),
+        trailing: IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              cart.addItem(product);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Added ${product.title} to cart'),
+                action: SnackBarAction(
+                  label: 'Okay',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
+                ),
+              ));
+            }),
       ),
     );
   }

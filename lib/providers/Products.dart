@@ -17,4 +17,9 @@ class Products with ChangeNotifier {
   Product findById(int productId) {
     return this._products.firstWhere((product) => product.id == productId);
   }
+
+  void addProduct(Product product) {
+    this._products.add(Product.copyWith(product, newId: this._products.length+1));
+    notifyListeners();
+  }
 }
