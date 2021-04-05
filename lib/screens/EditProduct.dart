@@ -13,6 +13,7 @@ class EditProductScreen extends StatefulWidget {
 
 class _EditProductScreenState extends State<EditProductScreen> {
   bool _isInit = true;
+  bool _isEditing = false;
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   Product _editingProduct = Product(
@@ -21,16 +22,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (this._isInit) {
-      this._editingProduct ??= ModalRoute.of(context).settings.arguments as Product;
+      final product = ModalRoute.of(context)!.settings.arguments as Product?;
+      if (product != null) {
+        this._editingProduct = product;
+        this._imageUrlController.text = product.imageUrl ?? '';
+        this._isEditing = true;
+      }
     }
+    this._isInit = false;
     super.didChangeDependencies();
   }
 
   void onSave() {
-    if (this._form.currentState.validate()) {
-      this._form.currentState.save();
-      Provider.of<Products>(context, listen: false)
-          .addProduct(this._editingProduct);
+    if (this._form.currentState!.validate()) {
+      this._form.currentState!.save();
+      final productsProvider = Provider.of<Products>(context, listen: false);
+      if (this._isEditing){
+        productsProvider.editProduct(this._editingProduct);
+      }
+      else{
+        productsProvider.addProduct(this._editingProduct);
+      }
       Navigator.pop(context);
     }
   }
@@ -48,11 +60,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
           padding: EdgeInsets.only(left: 10, right: 10),
           children: [
             TextFormField(
+              initialValue: this._editingProduct.title ?? '',
               autofocus: true,
               decoration: InputDecoration(labelText: 'Title'),
               textInputAction: TextInputAction.next,
               validator: (title) {
-                if (title.isEmpty) {
+                if (title!.isEmpty) {
                   return 'Please enter a title';
                 }
                 return null;
@@ -63,21 +76,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
               },
             ),
             TextFormField(
+              initialValue:
+                  this._editingProduct.price?.toStringAsPrecision(4) ?? '',
               decoration: InputDecoration(labelText: 'Price'),
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
               validator: (price) {
-                if (double.tryParse(price) == null) {
+                if (double.tryParse(price!) == null) {
                   return 'Please enter a valid price';
                 }
                 return null;
               },
               onSaved: (price) {
                 this._editingProduct = Product.copyWith(this._editingProduct,
-                    newPrice: double.parse(price));
+                    newPrice: double.parse(price!));
               },
             ),
             TextFormField(
+              initialValue: this._editingProduct.description ?? '',
               decoration: InputDecoration(labelText: 'Description'),
               keyboardType: TextInputType.multiline,
               onSaved: (description) {
@@ -93,6 +109,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: TextFormField(
+                      // initialValue: this._editingProduct.imageUrl ?? '',
                       decoration: InputDecoration(labelText: 'Image Url'),
                       keyboardType: TextInputType.url,
                       controller: this._imageUrlController,
@@ -106,14 +123,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ),
                 ),
                 this._imageUrlController.text.isNotEmpty
-                    ? (Container(
+                    ? Container(
                         height: 100,
                         width: 100,
                         child: FittedBox(
                           child: Image.network(this._imageUrlController.text),
                           fit: BoxFit.contain,
                         ),
-                      ))
+                      )
                     : Container()
               ],
             )

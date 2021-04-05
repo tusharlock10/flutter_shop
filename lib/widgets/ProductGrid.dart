@@ -8,8 +8,8 @@ class ProductGrid extends StatelessWidget {
   final bool showOnlyFavoutites;
 
   const ProductGrid({
-    Key key,
-    @required this.showOnlyFavoutites,
+    Key? key,
+    required this.showOnlyFavoutites,
   }) : super(key: key);
 
   @override

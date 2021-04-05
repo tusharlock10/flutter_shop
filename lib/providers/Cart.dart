@@ -5,13 +5,13 @@ class CartItem {
   final int id;
   final Product product;
   final int quantity;
-  final double totalPrice;
+  final double? totalPrice;
 
   CartItem({
-    @required this.id,
-    @required this.product,
-    @required this.quantity,
-    @required this.totalPrice,
+    required this.id,
+    required this.product,
+    required this.quantity,
+    required this.totalPrice,
   });
 }
 
@@ -30,7 +30,7 @@ class Cart with ChangeNotifier {
     double totalPrice = 0;
     this
         ._items
-        .forEach((cartItem) => totalPrice = totalPrice + cartItem.totalPrice);
+        .forEach((cartItem) => totalPrice = totalPrice + cartItem.totalPrice!);
     return totalPrice.roundToDouble();
   }
 
@@ -53,7 +53,7 @@ class Cart with ChangeNotifier {
         id: cartItem.id,
         quantity: cartItem.quantity + 1,
         product: cartItem.product,
-        totalPrice: cartItem.totalPrice + cartItem.product.price,
+        totalPrice: cartItem.totalPrice! + cartItem.product.price!,
       );
       this._items[productIndex] = newCartItem;
     }

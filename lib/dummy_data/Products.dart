@@ -1,6 +1,6 @@
 import '../providers/Product.dart';
 
-final PRODUCTS = [
+final productsData = [
   Product(
     id: 1,
     title: "Toy",

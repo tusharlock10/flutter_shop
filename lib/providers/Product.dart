@@ -1,35 +1,35 @@
 import 'package:flutter/foundation.dart';
 
 class Product with ChangeNotifier {
-  final int id;
-  final String title;
-  final String description;
-  final double price;
-  final String imageUrl;
+  final int? id;
+  final String? title;
+  final String? description;
+  final double? price;
+  final String? imageUrl;
   bool isFavourite;
 
   Product({
-    @required this.id,
-    @required this.title,
-    @required this.description,
-    @required this.price,
-    @required this.imageUrl,
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
     this.isFavourite = false,
   });
 
   Product.copyWith(Product product,
-      {int newId,
-      String newTitle,
-      String newDescription,
-      double newPrice,
-      String newimageUrl,
-      bool newIsFavourite})
+      {int? newId,
+      String? newTitle,
+      String? newDescription,
+      double? newPrice,
+      String? newimageUrl,
+      bool? newIsFavourite = false})
       : id = newId ?? product.id,
         title = newTitle ?? product.title,
         description = newDescription ?? product.description,
         price = newPrice ?? product.price,
         imageUrl = newimageUrl ?? product.imageUrl,
-        isFavourite = newIsFavourite ?? product.isFavourite ?? false;
+        isFavourite = newIsFavourite ?? product.isFavourite;
 
   @override
   String toString() {

@@ -18,7 +18,7 @@ class ProductItem extends StatelessWidget {
               .pushNamed(ProductDetail.routeName, arguments: product.id);
         },
         child: Container(
-          child: Image.network(product.imageUrl, fit: BoxFit.cover),
+          child: Image.network(product.imageUrl!, fit: BoxFit.cover),
         ),
       ),
       footer: GridTileBar(

@@ -33,7 +33,7 @@ class CartItem extends StatelessWidget {
             children: [
               Text('${this.cartItem.product.title}'),
               Text('${this.cartItem.quantity}'),
-              Text('\$${this.cartItem.totalPrice.round()}'),
+              Text('\$${this.cartItem.totalPrice!.round()}'),
             ],
           ),
         ),

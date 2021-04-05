@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'dart:math' as Math;
-
 import '../providers/Cart.dart' as CartProvider;
 import '../widgets/AppDrawer.dart';
 import '../widgets/CartItem.dart';

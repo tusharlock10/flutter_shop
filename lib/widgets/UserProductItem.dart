@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/Product.dart';
+import '../providers/Products.dart';
 import '../screens/EditProduct.dart';
 
 class UserProductItem extends StatelessWidget {
@@ -23,7 +25,7 @@ class UserProductItem extends StatelessWidget {
             ]),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
-          child: Image.network(this.product.imageUrl, width: 48, height: 48),
+          child: Image.network(this.product.imageUrl!, width: 48, height: 48),
         ),
       ),
       title: Text('${this.product.title}'),
@@ -35,17 +37,19 @@ class UserProductItem extends StatelessWidget {
               Icons.edit,
               color: Theme.of(context).primaryColor,
             ),
-            onPressed: () => Navigator.of(context).pushNamed(
+            onPressed: () {
+              print('Here in this');
+              Navigator.of(context).pushNamed(
               EditProductScreen.routeName,
               arguments: this.product,
-            ),
+            );},
           ),
           IconButton(
             icon: Icon(
               Icons.delete,
               color: Theme.of(context).errorColor,
             ),
-            onPressed: () {},
+            onPressed: () =>Provider.of<Products>(context, listen: false).removeProduct(this.product),
           )
         ]),
       ),
