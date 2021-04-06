@@ -40,20 +40,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
       this.setState(() => this._isLoading = true);
 
       final productsProvider = Provider.of<Products>(context, listen: false);
-      if (this._isEditing) {
-        productsProvider.editProduct(this._editingProduct);
-      } else {
-        try {
+
+      try {
+        if (this._isEditing) {
+          await productsProvider.editProduct(this._editingProduct);
+        } else {
           await productsProvider.addProduct(this._editingProduct);
-          Navigator.pop(context);
-        } catch (error) {
-          this.setState(() => this._isLoading = false);
-          showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                    title: Text('An error occured'),
-                  ));
         }
+        Navigator.pop(context);
+      } catch (error) {
+        this.setState(() => this._isLoading = false);
+        showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  title: Text('An error occured'),
+                ));
       }
     }
   }

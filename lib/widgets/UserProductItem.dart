@@ -38,7 +38,6 @@ class UserProductItem extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             onPressed: () {
-              print('Here in this');
               Navigator.of(context).pushNamed(
               EditProductScreen.routeName,
               arguments: this.product,

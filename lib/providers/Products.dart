@@ -20,7 +20,7 @@ class Products with ChangeNotifier {
     return _products.where((element) => element.isFavourite).toList();
   }
 
-  Product findById(int? productId) {
+  Product findById(String? productId) {
     return this._products.firstWhere((product) => product.id == productId);
   }
 
@@ -51,7 +51,9 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void editProduct(Product productToEdit) {
+  Future<void> editProduct(Product productToEdit) async {
+    await httpClient.patch<String>('products/${productToEdit.id}.json',
+        data: productToEdit.toJsonString());
     this._products = this._products.map((product) {
       if (product.id == productToEdit.id) {
         return productToEdit;
@@ -63,6 +65,7 @@ class Products with ChangeNotifier {
   }
 
   void removeProduct(Product productToRemove) {
+    httpClient.delete<String>('products/${productToRemove.id}.json');
     this._products.removeWhere((product) => product.id == productToRemove.id);
     notifyListeners();
   }
