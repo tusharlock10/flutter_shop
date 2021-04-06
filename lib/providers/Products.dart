@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart' show Dio, BaseOptions;
 
 import './Product.dart';
 import '../dummy_data/Products.dart';
 
+const BASE_URL = 'https://flutter-shop-2-default-rtdb.firebaseio.com/';
+final httpClient = Dio(BaseOptions(baseUrl: BASE_URL));
+
 class Products with ChangeNotifier {
-  List<Product> _products = productsData;
+  List<Product> _products = [];
 
   List<Product> get products {
     return [...this._products];
@@ -18,10 +24,30 @@ class Products with ChangeNotifier {
     return this._products.firstWhere((product) => product.id == productId);
   }
 
-  void addProduct(Product product) {
-    this
-        ._products
-        .add(Product.copyWith(product, newId: this._products.length + 1));
+  List<Product> _getProductsFromJson(String? json) {
+    List<Product> products = [];
+    if (json == null) {
+      return products;
+    }
+    final Map<String, dynamic> productsMap = jsonDecode(json);
+    productsMap.forEach((productId, productMap) {
+      final product = Product.fromJson(productMap, productId: productId);
+      products.add(product);
+    });
+    return products;
+  }
+
+  Future<void> fetchProducts() async {
+    final response = await httpClient.get<String>('products.json');
+    this._products = this._getProductsFromJson(response.data);
+    notifyListeners();
+  }
+
+  Future<void> addProduct(Product product) async {
+    final response = await httpClient.post<String>('products.json',
+        data: product.toJsonString());
+    final String newId = jsonDecode(response.data!)['name'];
+    this._products.add(Product.copyWith(product, newId: newId));
     notifyListeners();
   }
 

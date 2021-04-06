@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/providers/Products.dart';
 
 import '../providers/Cart.dart';
 import './Cart.dart' as CartScreen;
@@ -16,6 +17,19 @@ class ProductOverview extends StatefulWidget {
 
 class _ProductOverviewState extends State<ProductOverview> {
   bool showOnlyFavoutites = false;
+  bool _isInit = true;
+  bool _isLoading = false;
+
+  @override
+  didChangeDependencies() {
+    if (this._isInit) {
+      this.setState(() => this._isLoading = true);
+      Provider.of<Products>(context)
+          .fetchProducts()
+          .then((_) => this.setState(() => this._isLoading = false));
+      this._isInit = false;
+    }
+  }
 
   onSelectValue(int value) {
     setState(() {
@@ -67,7 +81,11 @@ class _ProductOverviewState extends State<ProductOverview> {
           ),
         ],
       ),
-      body: ProductGrid(showOnlyFavoutites: this.showOnlyFavoutites),
+      body: this._isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGrid(showOnlyFavoutites: this.showOnlyFavoutites),
     );
   }
 }

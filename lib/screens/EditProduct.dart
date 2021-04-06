@@ -14,6 +14,7 @@ class EditProductScreen extends StatefulWidget {
 class _EditProductScreenState extends State<EditProductScreen> {
   bool _isInit = true;
   bool _isEditing = false;
+  bool _isLoading = false;
   final _imageUrlController = TextEditingController();
   final _form = GlobalKey<FormState>();
   Product _editingProduct = Product(
@@ -33,17 +34,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.didChangeDependencies();
   }
 
-  void onSave() {
+  void onSave() async {
     if (this._form.currentState!.validate()) {
       this._form.currentState!.save();
+      this.setState(() => this._isLoading = true);
+
       final productsProvider = Provider.of<Products>(context, listen: false);
-      if (this._isEditing){
+      if (this._isEditing) {
         productsProvider.editProduct(this._editingProduct);
+      } else {
+        try {
+          await productsProvider.addProduct(this._editingProduct);
+          Navigator.pop(context);
+        } catch (error) {
+          this.setState(() => this._isLoading = false);
+          showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                    title: Text('An error occured'),
+                  ));
+        }
       }
-      else{
-        productsProvider.addProduct(this._editingProduct);
-      }
-      Navigator.pop(context);
     }
   }
 
@@ -54,89 +65,95 @@ class _EditProductScreenState extends State<EditProductScreen> {
         title: Text('Edit Product'),
         actions: [IconButton(icon: Icon(Icons.save), onPressed: this.onSave)],
       ),
-      body: Form(
-        key: _form,
-        child: ListView(
-          padding: EdgeInsets.only(left: 10, right: 10),
-          children: [
-            TextFormField(
-              initialValue: this._editingProduct.title ?? '',
-              autofocus: true,
-              decoration: InputDecoration(labelText: 'Title'),
-              textInputAction: TextInputAction.next,
-              validator: (title) {
-                if (title!.isEmpty) {
-                  return 'Please enter a title';
-                }
-                return null;
-              },
-              onSaved: (title) {
-                this._editingProduct =
-                    Product.copyWith(this._editingProduct, newTitle: title);
-              },
-            ),
-            TextFormField(
-              initialValue:
-                  this._editingProduct.price?.toStringAsPrecision(4) ?? '',
-              decoration: InputDecoration(labelText: 'Price'),
-              textInputAction: TextInputAction.next,
-              keyboardType: TextInputType.number,
-              validator: (price) {
-                if (double.tryParse(price!) == null) {
-                  return 'Please enter a valid price';
-                }
-                return null;
-              },
-              onSaved: (price) {
-                this._editingProduct = Product.copyWith(this._editingProduct,
-                    newPrice: double.parse(price!));
-              },
-            ),
-            TextFormField(
-              initialValue: this._editingProduct.description ?? '',
-              decoration: InputDecoration(labelText: 'Description'),
-              keyboardType: TextInputType.multiline,
-              onSaved: (description) {
-                this._editingProduct = Product.copyWith(this._editingProduct,
-                    newDescription: description);
-              },
-              maxLines: 3,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: TextFormField(
-                      // initialValue: this._editingProduct.imageUrl ?? '',
-                      decoration: InputDecoration(labelText: 'Image Url'),
-                      keyboardType: TextInputType.url,
-                      controller: this._imageUrlController,
-                      onFieldSubmitted: (_) => this.setState(() {}),
-                      onSaved: (imageUrl) {
-                        this._editingProduct = Product.copyWith(
-                            this._editingProduct,
-                            newimageUrl: imageUrl);
-                      },
-                    ),
+      body: this._isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Form(
+              key: _form,
+              child: ListView(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                children: [
+                  TextFormField(
+                    initialValue: this._editingProduct.title ?? '',
+                    decoration: InputDecoration(labelText: 'Title'),
+                    textInputAction: TextInputAction.next,
+                    validator: (title) {
+                      if (title!.isEmpty) {
+                        return 'Please enter a title';
+                      }
+                      return null;
+                    },
+                    onSaved: (title) {
+                      this._editingProduct = Product.copyWith(
+                          this._editingProduct,
+                          newTitle: title);
+                    },
                   ),
-                ),
-                this._imageUrlController.text.isNotEmpty
-                    ? Container(
-                        height: 100,
-                        width: 100,
-                        child: FittedBox(
-                          child: Image.network(this._imageUrlController.text),
-                          fit: BoxFit.contain,
+                  TextFormField(
+                    initialValue:
+                        this._editingProduct.price?.toStringAsPrecision(4) ??
+                            '',
+                    decoration: InputDecoration(labelText: 'Price'),
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.number,
+                    validator: (price) {
+                      if (double.tryParse(price!) == null) {
+                        return 'Please enter a valid price';
+                      }
+                      return null;
+                    },
+                    onSaved: (price) {
+                      this._editingProduct = Product.copyWith(
+                          this._editingProduct,
+                          newPrice: double.parse(price!));
+                    },
+                  ),
+                  TextFormField(
+                    initialValue: this._editingProduct.description ?? '',
+                    decoration: InputDecoration(labelText: 'Description'),
+                    keyboardType: TextInputType.multiline,
+                    onSaved: (description) {
+                      this._editingProduct = Product.copyWith(
+                          this._editingProduct,
+                          newDescription: description);
+                    },
+                    maxLines: 3,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: TextFormField(
+                            // initialValue: this._editingProduct.imageUrl ?? '',
+                            decoration: InputDecoration(labelText: 'Image Url'),
+                            keyboardType: TextInputType.url,
+                            controller: this._imageUrlController,
+                            onFieldSubmitted: (_) => this.setState(() {}),
+                            onSaved: (imageUrl) {
+                              this._editingProduct = Product.copyWith(
+                                  this._editingProduct,
+                                  newimageUrl: imageUrl);
+                            },
+                          ),
                         ),
-                      )
-                    : Container()
-              ],
-            )
-          ],
-        ),
-      ),
+                      ),
+                      this._imageUrlController.text.isNotEmpty
+                          ? Container(
+                              height: 100,
+                              width: 100,
+                              child: FittedBox(
+                                child: Image.network(
+                                    this._imageUrlController.text),
+                                fit: BoxFit.contain,
+                              ),
+                            )
+                          : Container()
+                    ],
+                  )
+                ],
+              ),
+            ),
     );
   }
 }

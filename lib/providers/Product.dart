@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 class Product with ChangeNotifier {
-  final int? id;
+  final String? id;
   final String? title;
   final String? description;
   final double? price;
@@ -18,7 +20,7 @@ class Product with ChangeNotifier {
   });
 
   Product.copyWith(Product product,
-      {int? newId,
+      {String? newId,
       String? newTitle,
       String? newDescription,
       double? newPrice,
@@ -30,6 +32,29 @@ class Product with ChangeNotifier {
         price = newPrice ?? product.price,
         imageUrl = newimageUrl ?? product.imageUrl,
         isFavourite = newIsFavourite ?? product.isFavourite;
+
+  Product.fromJson(Map<String, dynamic> productMap, {String? productId})
+      : id = productId ?? productMap['id'],
+        title = productMap['title'],
+        description = productMap['description'],
+        price = productMap['price'],
+        imageUrl = productMap['imageUrl'],
+        isFavourite = productMap['isFavourite'];
+
+  Map toJson() {
+    return {
+      'id': this.id,
+      'title': this.title,
+      'description': this.description,
+      'price': this.price,
+      'imageUrl': this.imageUrl,
+      'isFavourite': this.isFavourite,
+    };
+  }
+
+  String toJsonString() {
+    return jsonEncode(this);
+  }
 
   @override
   String toString() {
